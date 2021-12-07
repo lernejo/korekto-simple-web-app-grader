@@ -7,8 +7,13 @@ public class LaunchingContext {
     public final Integer pgPort;
     public boolean compilationFailed;
     public boolean testFailed;
+    public Integer postedTodosNbr = null;
 
     public LaunchingContext(Integer pgPort) {
         this.pgPort = pgPort;
+    }
+
+    public String pgUrl() {
+        return "jdbc:postgresql://localhost:" + pgPort + "/postgres";
     }
 }

@@ -1,16 +1,5 @@
 package com.github.lernejo.korekto.grader.simple_web_app.parts;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.TimeUnit;
-
 import com.github.lernejo.korekto.grader.simple_web_app.LaunchingContext;
 import com.github.lernejo.korekto.grader.simple_web_app.TodoApiClient;
 import com.github.lernejo.korekto.toolkit.Exercise;
@@ -22,6 +11,17 @@ import com.github.lernejo.korekto.toolkit.thirdparty.maven.MavenExecutionHandle;
 import com.github.lernejo.korekto.toolkit.thirdparty.maven.MavenExecutor;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.TimeUnit;
 
 public class Part3Grader implements PartGrader {
 
@@ -48,7 +48,7 @@ public class Part3Grader implements PartGrader {
             return result(List.of("Not trying to start server as compilation failed"), 0.0D);
         }
 
-        String pgUrl = "jdbc:postgresql://localhost:" + context.pgPort + "/postgres";
+        String pgUrl = context.pgUrl();
         initdb(pgUrl);
         try
             (MavenExecutionHandle handle = MavenExecutor.executeGoalAsync(exercise, configuration.getWorkspace(),
@@ -68,6 +68,7 @@ public class Part3Grader implements PartGrader {
                 for (int i = 0; i < callNbr; i++) {
                     client.addTodo(new Todo("message" + i, "author2")).execute();
                 }
+                context.postedTodosNbr = callNbr + 1;
             }
 
             Response<List<Todo>> getResponse = client.getTodos().execute();
@@ -77,10 +78,9 @@ public class Part3Grader implements PartGrader {
                 errors.add("Unsuccessful response of GET /api/todo: " + postResponse.code());
             } else {
                 List<Todo> todos = getResponse.body();
-                int todosSize = callNbr + 1;
-                if (todos.size() != todosSize) {
+                if (todos.size() != context.postedTodosNbr) {
                     grade -= maxGrade() / 3;
-                    errors.add("Expecting of GET /api/todo to return a list of size " + todosSize + " but was: " + todos.size());
+                    errors.add("Expecting of GET /api/todo to return a list of size " + context.postedTodosNbr + " but was: " + todos.size());
                 }
             }
 
