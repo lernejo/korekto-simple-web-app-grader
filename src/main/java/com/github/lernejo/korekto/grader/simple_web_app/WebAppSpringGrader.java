@@ -1,7 +1,22 @@
 package com.github.lernejo.korekto.grader.simple_web_app;
 
-import com.github.lernejo.korekto.grader.simple_web_app.parts.*;
-import com.github.lernejo.korekto.toolkit.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import com.github.lernejo.korekto.grader.simple_web_app.parts.Part1Grader;
+import com.github.lernejo.korekto.grader.simple_web_app.parts.Part2Grader;
+import com.github.lernejo.korekto.grader.simple_web_app.parts.Part3Grader;
+import com.github.lernejo.korekto.grader.simple_web_app.parts.Part4Grader;
+import com.github.lernejo.korekto.grader.simple_web_app.parts.Part5Grader;
+import com.github.lernejo.korekto.grader.simple_web_app.parts.PartGrader;
+import com.github.lernejo.korekto.toolkit.Exercise;
+import com.github.lernejo.korekto.toolkit.GradePart;
+import com.github.lernejo.korekto.toolkit.Grader;
+import com.github.lernejo.korekto.toolkit.GradingConfiguration;
+import com.github.lernejo.korekto.toolkit.GradingContext;
 import com.github.lernejo.korekto.toolkit.misc.HumanReadableDuration;
 import com.github.lernejo.korekto.toolkit.misc.Ports;
 import com.github.lernejo.korekto.toolkit.misc.SubjectForToolkitInclusion;
@@ -12,12 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @SubjectForToolkitInclusion
 public class WebAppSpringGrader implements Grader {
@@ -59,7 +68,7 @@ public class WebAppSpringGrader implements Grader {
 
     @Override
     public boolean needsWorkspaceReset() {
-        return false;
+        return true;
     }
 
     @Override
@@ -99,7 +108,8 @@ public class WebAppSpringGrader implements Grader {
             new Part1Grader(),
             new Part2Grader(),
             new Part3Grader(client),
-            new Part4Grader()
+            new Part4Grader(client),
+            new Part5Grader()
         );
     }
 }

@@ -25,6 +25,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Part3Grader implements PartGrader {
 
+    public static final String INSTANCE_ID_HEADER = "Instance-Id";
+
     private final TodoApiClient client;
     private final Random random = new Random();
 
@@ -59,29 +61,43 @@ public class Part3Grader implements PartGrader {
             double grade = maxGrade();
             List<String> errors = new ArrayList<>();
             Response<ResponseBody> postResponse = client.addTodo(new Todo("message1", "author1")).execute();
+            storeInstanceIdHeader(context, postResponse);
+
             int callNbr = random.nextInt(6) + 2;
 
-            if (!postResponse.isSuccessful()) {
-                grade -= maxGrade() / 2;
-                errors.add("Unsuccessful response of POST /api/todo: " + postResponse.code());
-            } else {
-                for (int i = 0; i < callNbr; i++) {
-                    client.addTodo(new Todo("message" + i, "author2")).execute();
+            try {
+                if (!postResponse.isSuccessful()) {
+                    grade -= maxGrade() / 2;
+                    errors.add("Unsuccessful response of POST /api/todo: " + postResponse.code());
+                } else {
+                    for (int i = 0; i < callNbr; i++) {
+                        Response<ResponseBody> otherResponse = client.addTodo(new Todo("message" + i, "author2")).execute();
+                        storeInstanceIdHeader(context, otherResponse);
+                    }
+                    context.postedTodosNbr = callNbr + 1;
                 }
-                context.postedTodosNbr = callNbr + 1;
+            } catch (RuntimeException e) {
+                grade -= maxGrade() / 2;
+                errors.add("Unsuccessful response of POST /api/todo: " + e.getMessage());
             }
 
-            Response<List<Todo>> getResponse = client.getTodos().execute();
+            try {
+                Response<List<Todo>> getResponse = client.getTodos().execute();
+                storeInstanceIdHeader(context, getResponse);
 
-            if (!getResponse.isSuccessful()) {
-                grade -= maxGrade() / 2;
-                errors.add("Unsuccessful response of GET /api/todo: " + postResponse.code());
-            } else {
-                List<Todo> todos = getResponse.body();
-                if (todos.size() != context.postedTodosNbr) {
-                    grade -= maxGrade() / 3;
-                    errors.add("Expecting of GET /api/todo to return a list of size " + context.postedTodosNbr + " but was: " + todos.size());
+                if (!getResponse.isSuccessful()) {
+                    grade -= maxGrade() / 2;
+                    errors.add("Unsuccessful response of GET /api/todo: " + postResponse.code());
+                } else {
+                    List<Todo> todos = getResponse.body();
+                    if (todos.size() != context.postedTodosNbr) {
+                        grade -= maxGrade() / 3;
+                        errors.add("Expecting of GET /api/todo to return a list of size " + context.postedTodosNbr + " but was: " + todos.size());
+                    }
                 }
+            } catch (RuntimeException e) {
+                grade -= maxGrade() / 2;
+                errors.add("Unsuccessful response of GET /api/todo: " + e.getMessage());
             }
 
             return result(errors, grade);
@@ -91,8 +107,16 @@ public class Part3Grader implements PartGrader {
             return result(List.of("Unwanted error during API invocation: " + e.getMessage()), 0.0D);
         } catch (IOException e) {
             return result(List.of("Fail to call server: " + e.getMessage()), 0.0D);
+        } finally {
+            Ports.waitForPortToBeFreed(8085, TimeUnit.SECONDS, 5L);
         }
+    }
 
+    private void storeInstanceIdHeader(LaunchingContext context, Response<?> response) {
+        String instanceId = response.headers().get(INSTANCE_ID_HEADER);
+        if (instanceId != null) {
+            context.instanceIds.add(instanceId);
+        }
     }
 
     private void initdb(String pgUrl) {
