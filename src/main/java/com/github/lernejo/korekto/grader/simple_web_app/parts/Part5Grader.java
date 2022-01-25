@@ -1,28 +1,27 @@
 package com.github.lernejo.korekto.grader.simple_web_app.parts;
 
 import com.github.lernejo.korekto.grader.simple_web_app.LaunchingContext;
-import com.github.lernejo.korekto.toolkit.Exercise;
 import com.github.lernejo.korekto.toolkit.GradePart;
-import com.github.lernejo.korekto.toolkit.GradingConfiguration;
-import com.github.lernejo.korekto.toolkit.thirdparty.git.GitContext;
+import com.github.lernejo.korekto.toolkit.PartGrader;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
 import java.util.List;
 
-public class Part5Grader implements PartGrader {
+public class Part5Grader implements PartGrader<LaunchingContext> {
 
     @Override
-    public String name() {
+    public @NotNull String name() {
         return "Part 5 - Database persistence";
     }
 
     @Override
-    public Double maxGrade() {
+    public @NotNull Double maxGrade() {
         return 4.0D;
     }
 
     @Override
-    public GradePart grade(GradingConfiguration configuration, Exercise exercise, LaunchingContext context, GitContext gitContext) {
+    public @NotNull GradePart grade(LaunchingContext context) {
         if (context.compilationFailed) {
             return result(List.of("Ignored due to previous compilation failure"), 0.0D);
         }

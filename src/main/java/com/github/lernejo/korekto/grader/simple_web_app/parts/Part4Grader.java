@@ -1,23 +1,22 @@
 package com.github.lernejo.korekto.grader.simple_web_app.parts;
 
+import com.github.lernejo.korekto.grader.simple_web_app.LaunchingContext;
+import com.github.lernejo.korekto.grader.simple_web_app.TodoApiClient;
+import com.github.lernejo.korekto.toolkit.GradePart;
+import com.github.lernejo.korekto.toolkit.PartGrader;
+import com.github.lernejo.korekto.toolkit.misc.Ports;
+import com.github.lernejo.korekto.toolkit.thirdparty.maven.MavenExecutionHandle;
+import com.github.lernejo.korekto.toolkit.thirdparty.maven.MavenExecutor;
+import org.jetbrains.annotations.NotNull;
+import retrofit2.Response;
+
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import com.github.lernejo.korekto.grader.simple_web_app.LaunchingContext;
-import com.github.lernejo.korekto.grader.simple_web_app.TodoApiClient;
-import com.github.lernejo.korekto.toolkit.Exercise;
-import com.github.lernejo.korekto.toolkit.GradePart;
-import com.github.lernejo.korekto.toolkit.GradingConfiguration;
-import com.github.lernejo.korekto.toolkit.misc.Ports;
-import com.github.lernejo.korekto.toolkit.thirdparty.git.GitContext;
-import com.github.lernejo.korekto.toolkit.thirdparty.maven.MavenExecutionHandle;
-import com.github.lernejo.korekto.toolkit.thirdparty.maven.MavenExecutor;
-import retrofit2.Response;
-
-public class Part4Grader implements PartGrader {
+public class Part4Grader implements PartGrader<LaunchingContext> {
 
     private final TodoApiClient client;
 
@@ -26,17 +25,17 @@ public class Part4Grader implements PartGrader {
     }
 
     @Override
-    public String name() {
+    public @NotNull String name() {
         return "Part 4 - Instance-Id header";
     }
 
     @Override
-    public Double maxGrade() {
+    public @NotNull Double maxGrade() {
         return 2.0D;
     }
 
     @Override
-    public GradePart grade(GradingConfiguration configuration, Exercise exercise, LaunchingContext context, GitContext gitContext) {
+    public @NotNull GradePart grade(LaunchingContext context) {
         if (context.compilationFailed) {
             return result(List.of("Ignored due to previous compilation failure"), 0.0D);
         }
@@ -51,7 +50,7 @@ public class Part4Grader implements PartGrader {
         }
 
         try
-            (MavenExecutionHandle handle = MavenExecutor.executeGoalAsync(exercise, configuration.getWorkspace(),
+            (MavenExecutionHandle ignored = MavenExecutor.executeGoalAsync(context.getExercise(), context.getConfiguration().getWorkspace(),
                 "org.springframework.boot:spring-boot-maven-plugin:2.5.5:run -Dspring-boot.run.jvmArguments='-Dserver.port=8085 -Dspring.datasource.url=" + context.pgUrl() + "'")) {
 
             Ports.waitForPortToBeListenedTo(8085, TimeUnit.SECONDS, 20L);

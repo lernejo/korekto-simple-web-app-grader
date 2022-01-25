@@ -5,6 +5,9 @@ Korekto grader for the simple webapp exercise
 
 ## Launch locally
 
+This **grader** uses [Testcontainers](https://www.testcontainers.org/) which needs Docker.  
+On Windows this means that the Docker engine must be running.
+
 To launch the tool locally, run `com.github.lernejo.korekto.toolkit.launcher.GradingJobLauncher` with the
 argument `-s=mySlug`
 

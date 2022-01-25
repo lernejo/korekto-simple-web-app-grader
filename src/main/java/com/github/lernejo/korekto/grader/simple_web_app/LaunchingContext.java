@@ -1,19 +1,20 @@
 package com.github.lernejo.korekto.grader.simple_web_app;
 
+import com.github.lernejo.korekto.toolkit.GradingConfiguration;
+import com.github.lernejo.korekto.toolkit.GradingContext;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.lernejo.korekto.toolkit.misc.SubjectForToolkitInclusion;
-
-@SubjectForToolkitInclusion
-public class LaunchingContext {
+public class LaunchingContext extends GradingContext {
     public final Integer pgPort;
     public final List<String> instanceIds = new ArrayList<>();
     public boolean compilationFailed;
     public boolean testFailed;
     public Integer postedTodosNbr = null;
 
-    public LaunchingContext(Integer pgPort) {
+    public LaunchingContext(GradingConfiguration configuration, Integer pgPort) {
+        super(configuration);
         this.pgPort = pgPort;
     }
 

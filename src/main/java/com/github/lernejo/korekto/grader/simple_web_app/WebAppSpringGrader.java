@@ -1,26 +1,10 @@
 package com.github.lernejo.korekto.grader.simple_web_app;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import com.github.lernejo.korekto.grader.simple_web_app.parts.Part1Grader;
-import com.github.lernejo.korekto.grader.simple_web_app.parts.Part2Grader;
-import com.github.lernejo.korekto.grader.simple_web_app.parts.Part3Grader;
-import com.github.lernejo.korekto.grader.simple_web_app.parts.Part4Grader;
-import com.github.lernejo.korekto.grader.simple_web_app.parts.Part5Grader;
-import com.github.lernejo.korekto.grader.simple_web_app.parts.PartGrader;
-import com.github.lernejo.korekto.toolkit.Exercise;
-import com.github.lernejo.korekto.toolkit.GradePart;
-import com.github.lernejo.korekto.toolkit.Grader;
-import com.github.lernejo.korekto.toolkit.GradingConfiguration;
-import com.github.lernejo.korekto.toolkit.GradingContext;
+import com.github.lernejo.korekto.grader.simple_web_app.parts.*;
+import com.github.lernejo.korekto.toolkit.*;
 import com.github.lernejo.korekto.toolkit.misc.HumanReadableDuration;
 import com.github.lernejo.korekto.toolkit.misc.Ports;
 import com.github.lernejo.korekto.toolkit.misc.SubjectForToolkitInclusion;
-import com.github.lernejo.korekto.toolkit.thirdparty.git.GitContext;
 import com.github.lernejo.korekto.toolkit.thirdparty.git.GitNature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +12,14 @@ import org.testcontainers.containers.GenericContainer;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 @SubjectForToolkitInclusion
-public class WebAppSpringGrader implements Grader {
+public class WebAppSpringGrader implements Grader<LaunchingContext> {
 
     private final Logger logger = LoggerFactory.getLogger(WebAppSpringGrader.class);
 
@@ -72,32 +62,25 @@ public class WebAppSpringGrader implements Grader {
     }
 
     @Override
-    public void run(GradingConfiguration gradingConfiguration, GradingContext context) {
-        Optional<GitNature> optionalGitNature = context.getExercise().lookupNature(GitNature.class);
-        if (optionalGitNature.isEmpty()) {
-            context.getGradeDetails().getParts().add(new GradePart("exercise", 0D, 12D, List.of("Not a Git project")));
-        } else {
-            GitNature gitNature = optionalGitNature.get();
-            context.getGradeDetails().getParts().addAll(gitNature.withContext(c -> grade(gradingConfiguration, context.getExercise(), c)));
-        }
+    public LaunchingContext gradingContext(GradingConfiguration configuration) {
+        return new LaunchingContext(configuration, genericContainer.getMappedPort(5432));
     }
 
-    @SubjectForToolkitInclusion(additionalInfo = "as an overridable method `Grader#context()` and GradingContext should be overridable")
-    public LaunchingContext launchingContext() {
-        return new LaunchingContext(genericContainer.getMappedPort(5432));
+    @Override
+    public void run(LaunchingContext context) {
+        context.getGradeDetails().getParts().addAll(grade(context));
     }
 
-    private Collection<? extends GradePart> grade(GradingConfiguration configuration, Exercise exercise, GitContext gitContext) {
-        LaunchingContext context = launchingContext();
+    private Collection<? extends GradePart> grade(LaunchingContext context) {
         return graders().stream()
-            .map(g -> applyPartGrader(configuration, exercise, gitContext, context, g))
+            .map(g -> applyPartGrader(context, g))
             .collect(Collectors.toList());
     }
 
-    private GradePart applyPartGrader(GradingConfiguration configuration, Exercise exercise, GitContext gitContext, LaunchingContext context, PartGrader g) {
+    private GradePart applyPartGrader(LaunchingContext context, PartGrader g) {
         long startTime = System.currentTimeMillis();
         try {
-            return g.grade(configuration, exercise, context, gitContext);
+            return g.grade(context);
         } finally {
             logger.debug(g.name() + " in " + HumanReadableDuration.toString(System.currentTimeMillis() - startTime));
         }
