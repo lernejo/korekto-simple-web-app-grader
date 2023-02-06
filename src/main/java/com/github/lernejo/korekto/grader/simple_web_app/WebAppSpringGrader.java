@@ -5,6 +5,8 @@ import com.github.lernejo.korekto.toolkit.*;
 import com.github.lernejo.korekto.toolkit.misc.HumanReadableDuration;
 import com.github.lernejo.korekto.toolkit.misc.Ports;
 import com.github.lernejo.korekto.toolkit.misc.SubjectForToolkitInclusion;
+import com.github.lernejo.korekto.toolkit.partgrader.GitHubActionsPartGrader;
+import com.github.lernejo.korekto.toolkit.partgrader.MavenCompileAndTestPartGrader;
 import com.github.lernejo.korekto.toolkit.thirdparty.git.GitNature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,13 +88,13 @@ public class WebAppSpringGrader implements Grader<LaunchingContext> {
         }
     }
 
-    private Collection<? extends PartGrader> graders() {
+    private Collection<? extends PartGrader<LaunchingContext>> graders() {
         return List.of(
-            new Part1Grader(),
-            new Part2Grader(),
-            new Part3Grader(client),
-            new Part4Grader(client),
-            new Part5Grader()
+            new MavenCompileAndTestPartGrader<>("Part 1 - Compilation & Tests", 2.0D),
+            new GitHubActionsPartGrader<>("Part 2 - CI", 1.0D),
+            new Part3Grader(client)
+            ,new Part4Grader(client)
+            ,new Part5Grader()
         );
     }
 }
