@@ -22,7 +22,7 @@ public class Part5Grader implements PartGrader<LaunchingContext> {
 
     @Override
     public @NotNull GradePart grade(LaunchingContext context) {
-        if (context.compilationFailed) {
+        if (context.hasCompilationFailed()) {
             return result(List.of("Ignored due to previous compilation failure"), 0.0D);
         }
         if (context.postedTodosNbr == null) {
