@@ -2,6 +2,7 @@
 Korekto grader for the simple webapp exercise
 
 [![Build](https://github.com/lernejo/korekto-simple-web-app-grader/actions/workflows/build.yml/badge.svg)](https://github.com/lernejo/korekto-simple-web-app-grader/actions)
+[![codecov](https://codecov.io/gh/lernejo/korekto-simple-web-app-grader/branch/main/graph/badge.svg?token=S9Q1TH2AYR)](https://codecov.io/gh/lernejo/korekto-simple-web-app-grader)
 
 ## Launch locally
 
