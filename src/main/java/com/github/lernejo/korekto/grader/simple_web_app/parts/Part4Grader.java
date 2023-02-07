@@ -45,6 +45,9 @@ public class Part4Grader implements PartGrader<LaunchingContext> {
 
         Set<String> instanceIdsWithoutDuplicates = new HashSet<>(context.instanceIds);
 
+        if (instanceIdsWithoutDuplicates.contains("<none>")) {
+            return result(List.of("No header `" + Part3Grader.INSTANCE_ID_HEADER + "` found in request response"), 0.0D);
+        }
         if (instanceIdsWithoutDuplicates.size() != 1) {
             return result(List.of("Instance-Id header changes at every call, whereas it should be the same during the life of the server"), maxGrade() / 2);
         }

@@ -18,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
@@ -116,9 +117,7 @@ public class Part3Grader implements PartGrader<LaunchingContext> {
 
     private void storeInstanceIdHeader(LaunchingContext context, Response<?> response) {
         String instanceId = response.headers().get(INSTANCE_ID_HEADER);
-        if (instanceId != null) {
-            context.instanceIds.add(instanceId);
-        }
+        context.instanceIds.add(Objects.requireNonNullElse(instanceId, "<none>"));
     }
 
     private void initdb(String pgUrl) {
