@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.*;
 import java.util.List;
 
-public class Part5Grader implements PartGrader<LaunchingContext> {
+public class Part7Grader implements PartGrader<LaunchingContext> {
 
     @Override
     public @NotNull String name() {

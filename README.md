@@ -36,3 +36,8 @@ Like so:
 ```bash
 mvn compile exec:java -Dexec.args="-s=yourGitHubLogin" -Dgithub_token=<your token>
 ```
+## FAQ
+
+#### What can I do if the grader cannot start my program within the 20sec allocated ?
+
+If your PC is slow, 20 sec may not be enough to start your project. In that can, try to increase the timeout with `-Dserver_start_timeout=60` (for 60 sec).

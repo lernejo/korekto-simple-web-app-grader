@@ -7,7 +7,6 @@ import com.github.lernejo.korekto.toolkit.misc.Ports;
 import com.github.lernejo.korekto.toolkit.misc.SubjectForToolkitInclusion;
 import com.github.lernejo.korekto.toolkit.partgrader.GitHubActionsPartGrader;
 import com.github.lernejo.korekto.toolkit.partgrader.MavenCompileAndTestPartGrader;
-import com.github.lernejo.korekto.toolkit.thirdparty.git.GitNature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
@@ -16,7 +15,6 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -94,7 +92,7 @@ public class WebAppSpringGrader implements Grader<LaunchingContext> {
             new GitHubActionsPartGrader<>("Part 2 - CI", 1.0D),
             new Part3Grader(client)
             ,new Part4Grader(client)
-            ,new Part5Grader()
+            ,new Part7Grader()
         );
     }
 }

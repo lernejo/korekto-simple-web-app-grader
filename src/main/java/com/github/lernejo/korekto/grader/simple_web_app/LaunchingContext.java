@@ -19,6 +19,10 @@ public class LaunchingContext extends GradingContext implements MavenContext {
         this.pgPort = pgPort;
     }
 
+    public static long serverStartTime() {
+        return Long.parseLong(System.getProperty("server_start_timeout", "20"));
+    }
+
     public String pgUrl() {
         return "jdbc:postgresql://localhost:" + pgPort + "/postgres";
     }

@@ -56,7 +56,7 @@ public class Part3Grader implements PartGrader<LaunchingContext> {
             (MavenExecutionHandle ignored = MavenExecutor.executeGoalAsync(context.getExercise(), context.getConfiguration().getWorkspace(),
                 "org.springframework.boot:spring-boot-maven-plugin:2.5.5:run -Dspring-boot.run.jvmArguments='-Dserver.port=8085 -Dspring.datasource.url=" + pgUrl + "'")) {
 
-            Ports.waitForPortToBeListenedTo(8085, TimeUnit.SECONDS, 20L);
+            Ports.waitForPortToBeListenedTo(8085, TimeUnit.SECONDS, LaunchingContext.serverStartTime());
 
             double grade = maxGrade();
             List<String> errors = new ArrayList<>();
