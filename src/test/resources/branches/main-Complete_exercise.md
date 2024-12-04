@@ -1,9 +1,10 @@
 # Exercice commencé
-Votre note est de **13**/13.
+Votre note est de **12**/13.
 
 ## Détail
 * Part 1 - Compilation & Tests: 2/2
-* Part 2 - CI: 1/1
+* Part 2 - CI: 0/1
+    * Missing permission to access GitHub actions read-only API
 * Part 3 - HTTP server API: 4/4
 * Part 4 - Instance-Id header: 2/2
 * Part 5 - Database persistence: 4/4

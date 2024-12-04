@@ -1,0 +1,17 @@
+name: Build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          # - windows-latest as for now testcontainers refuses to connect to the Docker npipe socket, cf https://github.com/lernejo/reusable-workflows/pull/2
+    uses: lernejo/reusable-workflows/.github/workflows/ci.yml@main
+    secrets: inherit
+    with:
+      runs-on: ${{ matrix.os }}

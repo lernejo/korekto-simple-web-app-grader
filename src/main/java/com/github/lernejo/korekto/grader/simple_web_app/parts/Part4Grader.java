@@ -1,7 +1,6 @@
 package com.github.lernejo.korekto.grader.simple_web_app.parts;
 
 import com.github.lernejo.korekto.grader.simple_web_app.LaunchingContext;
-import com.github.lernejo.korekto.grader.simple_web_app.TodoApiClient;
 import com.github.lernejo.korekto.toolkit.GradePart;
 import com.github.lernejo.korekto.toolkit.PartGrader;
 import com.github.lernejo.korekto.toolkit.misc.Ports;
@@ -16,23 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-public class Part4Grader implements PartGrader<LaunchingContext> {
-
-    private final TodoApiClient client;
-
-    public Part4Grader(TodoApiClient client) {
-        this.client = client;
-    }
-
-    @Override
-    public @NotNull String name() {
-        return "Part 4 - Instance-Id header";
-    }
-
-    @Override
-    public @NotNull Double maxGrade() {
-        return 2.0D;
-    }
+public record Part4Grader(String name, Double maxGrade) implements PartGrader<LaunchingContext> {
 
     @Override
     public @NotNull GradePart grade(LaunchingContext context) {
@@ -58,7 +41,7 @@ public class Part4Grader implements PartGrader<LaunchingContext> {
 
             Ports.waitForPortToBeListenedTo(8085, TimeUnit.SECONDS, LaunchingContext.serverStartTime());
 
-            Response<List<Todo>> getResponse = client.getTodos().execute();
+            Response<List<Todo>> getResponse = context.client.getTodos().execute();
 
             String instanceId = getResponse.headers().get(Part3Grader.INSTANCE_ID_HEADER);
 
