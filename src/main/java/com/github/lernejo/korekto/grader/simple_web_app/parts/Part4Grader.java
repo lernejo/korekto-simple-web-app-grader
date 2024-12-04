@@ -37,7 +37,7 @@ public record Part4Grader(String name, Double maxGrade) implements PartGrader<La
 
         try
             (MavenExecutionHandle ignored = MavenExecutor.executeGoalAsync(context.getExercise(), context.getConfiguration().getWorkspace(),
-                "org.springframework.boot:spring-boot-maven-plugin:2.5.5:run -Dspring-boot.run.jvmArguments='-Dserver.port=8085 -Dspring.datasource.url=" + context.pgUrl() + "'")) {
+                "org.springframework.boot:spring-boot-maven-plugin:3.4.0:run -Dspring-boot.run.jvmArguments='-Dserver.port=8085 -Dspring.datasource.url=" + context.pgUrl() + "'")) {
 
             Ports.waitForPortToBeListenedTo(8085, TimeUnit.SECONDS, LaunchingContext.serverStartTime());
 
