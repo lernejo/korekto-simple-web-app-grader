@@ -9,14 +9,16 @@ import java.util.List;
 
 public class LaunchingContext extends GradingContext implements MavenContext {
     public final Integer pgPort;
+    public final TodoApiClient client;
     public final List<String> instanceIds = new ArrayList<>();
     private boolean compilationFailed;
     private boolean testFailed;
     public Integer postedTodosNbr = null;
 
-    public LaunchingContext(GradingConfiguration configuration, Integer pgPort) {
+    public LaunchingContext(GradingConfiguration configuration, Integer pgPort, TodoApiClient client) {
         super(configuration);
         this.pgPort = pgPort;
+        this.client = client;
     }
 
     public static long serverStartTime() {

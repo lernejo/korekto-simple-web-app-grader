@@ -1,7 +1,6 @@
 package com.github.lernejo.korekto.grader.simple_web_app.parts;
 
 import com.github.lernejo.korekto.grader.simple_web_app.LaunchingContext;
-import com.github.lernejo.korekto.grader.simple_web_app.TodoApiClient;
 import com.github.lernejo.korekto.toolkit.GradePart;
 import com.github.lernejo.korekto.toolkit.PartGrader;
 import com.github.lernejo.korekto.toolkit.misc.Ports;
@@ -19,30 +18,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 
-public class Part3Grader implements PartGrader<LaunchingContext> {
+public record Part3Grader(String name, Double maxGrade) implements PartGrader<LaunchingContext> {
 
     public static final String INSTANCE_ID_HEADER = "Instance-Id";
-
-    private final TodoApiClient client;
-    private final Random random = new Random();
-
-    public Part3Grader(TodoApiClient client) {
-        this.client = client;
-    }
-
-    @Override
-    public @NotNull String name() {
-        return "Part 3 - HTTP server API";
-    }
-
-    @Override
-    public @NotNull Double maxGrade() {
-        return 4.0D;
-    }
 
     @Override
     public @NotNull GradePart grade(LaunchingContext context) {
@@ -60,10 +41,10 @@ public class Part3Grader implements PartGrader<LaunchingContext> {
 
             double grade = maxGrade();
             List<String> errors = new ArrayList<>();
-            Response<ResponseBody> postResponse = client.addTodo(new Todo("message1", "author1")).execute();
+            Response<ResponseBody> postResponse = context.client.addTodo(new Todo("message1", "author1")).execute();
             storeInstanceIdHeader(context, postResponse);
 
-            int callNbr = random.nextInt(6) + 2;
+            int callNbr = LaunchingContext.getRandomSource().nextInt(6) + 2;
 
             try {
                 if (!postResponse.isSuccessful()) {
@@ -71,7 +52,7 @@ public class Part3Grader implements PartGrader<LaunchingContext> {
                     errors.add("Unsuccessful response of POST /api/todo: " + postResponse.code());
                 } else {
                     for (int i = 0; i < callNbr; i++) {
-                        Response<ResponseBody> otherResponse = client.addTodo(new Todo("message" + i, "author2")).execute();
+                        Response<ResponseBody> otherResponse = context.client.addTodo(new Todo("message" + i, "author2")).execute();
                         storeInstanceIdHeader(context, otherResponse);
                     }
                     context.postedTodosNbr = callNbr + 1;
@@ -82,7 +63,7 @@ public class Part3Grader implements PartGrader<LaunchingContext> {
             }
 
             try {
-                Response<List<Todo>> getResponse = client.getTodos().execute();
+                Response<List<Todo>> getResponse = context.client.getTodos().execute();
                 storeInstanceIdHeader(context, getResponse);
 
                 if (!getResponse.isSuccessful()) {

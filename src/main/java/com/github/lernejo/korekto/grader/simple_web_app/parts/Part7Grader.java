@@ -8,17 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.*;
 import java.util.List;
 
-public class Part7Grader implements PartGrader<LaunchingContext> {
-
-    @Override
-    public @NotNull String name() {
-        return "Part 5 - Database persistence";
-    }
-
-    @Override
-    public @NotNull Double maxGrade() {
-        return 4.0D;
-    }
+public record Part7Grader(String name, Double maxGrade) implements PartGrader<LaunchingContext> {
 
     @Override
     public @NotNull GradePart grade(LaunchingContext context) {
