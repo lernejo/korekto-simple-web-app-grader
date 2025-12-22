@@ -15,7 +15,7 @@
 
         <korekto-toolkit.version>2.0.2</korekto-toolkit.version>
         <retrofit.version>3.0.0</retrofit.version>
-        <logback-classic.version>1.5.22</logback-classic.version>
+        <logback-classic.version>1.5.23</logback-classic.version>
 
         <exec-maven-plugin.version>3.6.2</exec-maven-plugin.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
